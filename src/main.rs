@@ -1,55 +1,7 @@
 use std::io;
 use std::io::Write;
 
-enum TokenKind {
-    Number,
-    Identifier,
-
-    Plus,
-    Minus,
-    Times,
-    Divide,
-
-    End,
-    Error
-}
-
-struct Token {
-    content: String,
-    kind: TokenKind
-}
-
-struct Lexer {
-   content: Vec<char>,
-   cursor: usize
-}
-
-impl Lexer {
-    fn new(content: String) -> Self {
-        Self { content: content.chars().collect(), cursor: 0 }
-    }
-
-    fn advance(&mut self) {
-        self.cursor += 1;
-    }
-
-    fn char(&self) -> Option<char> {
-        if self.content.get(self.cursor).is_none() {
-            None
-        }
-        else {
-            Some(*self.content.get(self.cursor).unwrap())
-        }
-    }
-
-    fn next_token(&mut self) -> Token {
-        if self.char().is_none() {
-            Token { content: "".into(), kind: TokenKind::End }
-        }
-
-        
-    }
-}
+mod lexer;
 
 fn main() {
     print!("> ");
@@ -57,9 +9,16 @@ fn main() {
     let mut s = String::new();
     input(&mut s);
 
-    let l = Lexer::new(s.clone());
+    let l = lexer::Lexer::new(s.clone());
+    let tokens = Vec::new();
+    let token = l.next_token();
 
-    println!("{}", s);
+    while matches!(token.kind, lexer::TokenKind::End) {
+        tokens.push(token);
+        token = l.next_token();
+    }
+
+    println!("{:?}", tokens);
 }
 
 fn input(s: &mut String) {
